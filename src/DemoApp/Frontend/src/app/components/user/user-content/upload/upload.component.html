@@ -9,19 +9,32 @@
         <div class="box-header">
           <h3 class="box-title">Upload .hea and .dat Files</h3>
         </div> 
-        <div class="box-body">
-          
-          <div class="form-group has-feedback">
-            <input type="file" name="heaFile" id="heaFile" class="form-control" (change)="onHeaFileSelect($event)"/>
-            <button type="button" (click)="onUploadHea()">Upload .hea File</button>
+  
+        <form>
+          <div class="box-body">
+            
+            <div class="form-group has-feedback">
+              <input type="file" (change)="onHeaFileSelect($event)" accept=".hea" name="hea" id="heaFile" class="form-control"/>
+              <button type="button" (click)="onUploadHea()">Upload .hea File</button>
+            </div>
+            
+            <div class="form-group has-feedback"> 
+              <input type="file" (change)="onDatFileSelect($event)" accept=".dat" name="datFile" id="datFile" class="form-control"/>
+              <button type="button" (click)="onUploadDat()">Upload .dat File</button>
+            </div>
+                      
           </div>
-          
-          <div class="form-group has-feedback"> 
-            <input type="file" accept=".dat" name="datFile" id="datFile" class="form-control" (change)="onHeaFileSelect($event)"/>
-            <button type="button" (click)="onUploadDat()">Upload .dat File</button>
-          </div>
-                    
-        </div>
+          <!-- <div class="box-footer">
+            <div class="row">
+              <div class="col-xs-6">
+                <button type="submit" class="btn btn-primary btn-block">Submit</button>
+              </div>
+              <div class="col-xs-6">
+                <button type="reset" class="btn btn-primary btn-block">Reset</button>
+              </div>
+            </div>
+          </div> -->
+        </form>
       </div>
     </section>
   </div>

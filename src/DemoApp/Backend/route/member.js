@@ -5,11 +5,32 @@ var passport = require('passport');
 var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
+var multer = require('multer')
 
 var Mail = require('../config/mail');
 var Member = require('../model/member'); 
 var router = express.Router();
 var token = '';
+
+
+// Multer Config - Set Storage
+const storage = multer.diskStorage({
+	destination: './uploads',
+	filename: (req, file, callback) => {
+		callback(null, file.originalname);
+	}
+});
+
+//Multer Config - Init Upload - .hea
+const hea = multer({
+	storage: storage
+}).single('heaFile');
+
+//Multer Config - Init Upload - .dat
+const dat = multer({
+	storage: storage
+}).single('datFile');
+
 
 //Login *
 router.post('/login', (req, res) => {
@@ -200,14 +221,30 @@ router.post('/checkPassword',
 
 // Upload .hea File *
 router.post('/uploadhea', (req, res) => {
-	console.log(req.body.hea);
-	res.status(200).json({message: 'Success'});
+	hea(req, res, (err) => {
+		if(err) {
+			console.log(err);
+			return res.status(501).json({error: err});
+		}
+		else {
+			console.log(req.file);
+			return res.status(200).json({originalname:req.file.originalname, uploadname:req.file.filename});
+		}
+	});
 });
 
 // Upload .dat File *
 router.post('/uploaddat', (req, res) => {
-	console.log(req.body.dat);
-	res.status(200).json({message: 'Success'});
+	dat(req, res, (err) => {
+		if(err) {
+			console.log(err);
+			return res.status(501).json({error: err});
+		}
+		else {
+			console.log(req.file);
+			return res.status(200).json({originalname:req.file.originalname, uploadname:req.file.filename});
+		}
+	});
 });
 
 module.exports = router;
