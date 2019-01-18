@@ -21,16 +21,10 @@ const storage = multer.diskStorage({
 	}
 });
 
-//Multer Config - Init Upload - .hea
-const hea = multer({
+// Multer Config - Init Upload - All Files
+const files = multer({
 	storage: storage
-}).single('heaFile');
-
-//Multer Config - Init Upload - .dat
-const dat = multer({
-	storage: storage
-}).single('datFile');
-
+}).array('files', 2);
 
 //Login *
 router.post('/login', (req, res) => {
@@ -219,30 +213,16 @@ router.post('/checkPassword',
 		}
 );
 
-// Upload .hea File *
-router.post('/uploadhea', (req, res) => {
-	hea(req, res, (err) => {
+// Upload
+router.post('/upload', (req, res) => {
+	files(req, res, (err) => {
 		if(err) {
 			console.log(err);
 			return res.status(501).json({error: err});
 		}
 		else {
-			console.log(req.file);
-			return res.status(200).json({originalname:req.file.originalname, uploadname:req.file.filename});
-		}
-	});
-});
-
-// Upload .dat File *
-router.post('/uploaddat', (req, res) => {
-	dat(req, res, (err) => {
-		if(err) {
-			console.log(err);
-			return res.status(501).json({error: err});
-		}
-		else {
-			console.log(req.file);
-			return res.status(200).json({originalname:req.file.originalname, uploadname:req.file.filename});
+			console.log(req.files);
+			return res.status(200).json({obj: req.files});
 		}
 	});
 });

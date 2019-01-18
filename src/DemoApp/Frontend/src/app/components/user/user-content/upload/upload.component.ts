@@ -18,7 +18,6 @@ export class UploadComponent implements OnInit {
 
   ngOnInit() {}
 
-
   onHeaFileSelect(event) {
     this.heaFile = <File> event.target.files[0];
   }
@@ -27,26 +26,13 @@ export class UploadComponent implements OnInit {
     this.datFile = <File> event.target.files[0];
   }
 
-  onUploadHea() {
-    const hea = new FormData();
-    hea.append('heaFile', this.heaFile, this.heaFile.name);
-    this.userService.uploadHeaFile(hea).subscribe(
+  onUpload() {
+    const files = new FormData();
+    files.append('files', this.heaFile, this.heaFile.name);
+    files.append('files', this.datFile, this.datFile.name);
+    this.userService.uploadFile(files).subscribe(
       (data) => {
-        alert('Uploaded .hea file Successfully');
-        console.log(data);
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
-
-  onUploadDat() {
-    const dat = new FormData();
-    dat.append('datFile', this.datFile, this.datFile.name);
-    this.userService.uploadDatFile(dat).subscribe(
-      (data) => {
-        alert('Uploaded .dat file Successfully');
+        alert('Uploaded files Successfully');
         console.log(data);
       },
       (err) => {

@@ -125,12 +125,8 @@ export class UserService {
     });
   }
 
-  uploadHeaFile(model) {
-    return this.http.post(this.url + '/uploadhea', model);
-  }
-
-  uploadDatFile(model) {
-    return this.http.post(this.url + '/uploaddat', model);
+  uploadFile(model) {
+    return this.http.post(this.url + '/upload', model);
   }
 
 }
