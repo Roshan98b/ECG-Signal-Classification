@@ -1,0 +1,283 @@
+<header class="main-header" >
+  <a routerLink="content" class="logo"><span class="logo-mini"><b>Ex</b>T</span>
+      <span class="logo-lg"><b>Demo</b>App</span></a>
+  <nav class="navbar navbar-static-top" role="navigation">
+    <a class="sidebar-toggle" data-toggle="push-menu" role="button">
+    </a>
+    <div class="navbar-custom-menu">
+      <ul class="nav navbar-nav">
+
+        <li class="dropdown user user-menu">
+          <a class="dropdown-toggle" data-toggle="dropdown">
+            <span class="hidden-xs">{{userService.user.email}}</span>
+          </a>
+          <ul class="dropdown-menu">
+            <li class="user-header">
+              <p>
+                Welcome {{userService.user.firstname}} {{userService.user.lastname}}!!
+              </p>
+            </li>
+            <li class="user-footer">
+              <div class="pull-left">
+                <button class="btn btn-default btn-flat btn-link" (click)="onClickProfile()" data-toggle="modal" data-target="#profileModal">Profile</button>
+              </div>
+              <div class="pull-right">
+                <a (click)="logout()" class="btn btn-default btn-flat">Sign out</a>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<div class="modal" id="profileModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header" style="background-color: #357ca5; color: white;">
+        <button type="button" class="close" data-dismiss="modal" >
+                  <span >&times;</span></button>        
+        <h4 class="modal-title">Your Profile</h4>
+      </div>
+      
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-sm-6"><b>First Name:</b></div>
+            <div class="col-sm-6">{{selected.firstName}}</div>
+          </div><br>
+          <div class="row">
+            <div class="col-sm-6"><b>Last Name:</b></div>
+            <div class="col-sm-6">{{selected.lastName}}</div>
+          </div><br>
+          <div class="row">
+            <div class="col-sm-6"><b>Date of Birth:</b></div>
+            <div class="col-sm-6">{{selected.dob | date}}</div>
+          </div><br>
+          <div class="row">
+            <div class="col-sm-6"><b>Gender:</b></div>
+            <div class="col-sm-6">{{selected.gender}}</div>
+          </div><br>
+          <div class="row">
+            <div class="col-sm-6"><b>E-mail ID:</b></div>
+            <div class="col-sm-6">{{selected.email}}</div>
+          </div><br>                                      
+          <div class="row">
+            <div class="col-sm-6"><b>Mobile Number:</b></div>
+            <div class="col-sm-6">{{selected.mobileNumber}}</div>
+          </div><br>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm pull-left" data-target="#changepassword1" data-toggle="modal" (click)="changePassword()" style="background-color: #357ca5; color: white;">Change Password</button>
+          <button type="button" class="btn btn-sm pull-left" data-target="#changepassword2" data-toggle="modal" (click)="changeSecurityCredentials()" style="background-color: #357ca5; color: white;">Change Security Question</button>
+          <button type="button" class="btn btn-sm" data-target="#edit" data-toggle="modal" (click)="onEdit(selected)" style="background-color: #357ca5; color: white;">Edit Profile</button> 
+          <button type="button" class="btn btn-sm" data-dismiss="modal" style="background-color: #357ca5; color: white;">Close</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="edit">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header" style="background-color: #357ca5; color: white;">
+        <button type="button" class="close" data-dismiss="modal" >
+                  <span >&times;</span></button>        
+        <h4 class="modal-title">Your Profile</h4>
+      </div>
+      
+      <form [formGroup]="EditForm" (ngSubmit)="onSubmit()">
+        
+        <div class="modal-body">          
+          <div class="form-group has-feedback">
+            <input type="text" class="form-control" placeholder="First name" id="firstname" name="firstname" formControlName="firstname">
+            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+          </div>
+        
+          <div class="form-group has-feedback">
+            <input type="text" class="form-control" placeholder="Last Name" id="lastname" name="lastname" formControlName="lastname">
+            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+          </div>
+        
+          <div [ngClass]="{'has-success': EditForm.controls.dob.valid && dateValid ,'has-error': (!EditForm.controls.dob.valid || !dateValid) && focusDob,'form-group': true, 'has-feedback': true}">
+            <label *ngIf="EditForm.controls.dob.valid && dateValid" class="control-label" for="dob"><i class="fa fa-check"></i>You must be at least 12 years old!!</label>
+            <label *ngIf="(!EditForm.controls.dob.valid || !dateValid) && focusDob" class="control-label" for="dob"><i class="fa fa-times-circle-o"></i>Please enter a valid Date of Birth</label>
+              <input type="date" name="dob" id="dob" data-placeholder="Date of Birth" class="form-control" required formControlName="dob" (focus)="onFocus(1)"/>
+              <span class="glyphicon glyphicon-calendar form-control-feedback"></span>
+          </div>
+
+          <div class="form-group">
+            <label>Gender:</label>
+        
+            <div class="radio">
+              <label for="opt1">
+                <input type="radio" name="gender" id="opt1" value="Male" formControlName="gender" />
+               Male
+              </label>
+            </div>
+            
+            <div class="radio">
+                <label for="opt2">
+                <input type="radio" name="gender" id="opt2" value="Female" formControlName="gender" />
+                Female
+              </label>
+            </div>
+            
+            <div class="radio">
+              <label for="opt3">
+                <input type="radio" name="gender" id="opt3" value="Other" formControlName="gender" />
+                Other
+              </label>
+            </div>
+          </div>          
+        
+          <div [ngClass]="{'has-success': EditForm.controls.contactno.valid ,'has-error': !EditForm.controls.contactno.valid && focusMobile,'form-group': true, 'has-feedback': true}">
+            <label *ngIf="EditForm.controls.contactno.valid" class="control-label" for="contactno"><i class="fa fa-check"></i>Valid mobile number</label>
+            <label *ngIf="!EditForm.controls.contactno.valid && focusMobile" class="control-label" for="contactno"><i class="fa fa-times-circle-o"></i>Please enter a valid mobile number</label>
+            <input type="num" oninput="this.value=this.value.slice(0,10)" class="form-control" placeholder="Mobile number" id="contactno" name="contactno" formControlName="contactno" (focus)="onFocus(2)">
+            <span class="glyphicon glyphicon-phone form-control-feedback"></span>
+          </div>          
+        
+        </div>
+        
+        <div class="modal-footer">
+          <div class="row">            
+            <button type="submit" class="btn btn-sm" [disabled]="!EditForm.valid">Confirm Edit</button>
+            <button type="button" class="btn btn-sm" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="changepassword1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header" style="background-color: #357ca5; color: white;">
+        <button type="button" class="close" data-dismiss="modal" >
+                  <span >&times;</span></button>        
+        <h4 class="modal-title">Change your existing password</h4>
+      </div>
+      <form [formGroup]="passwordForm1" (ngSubmit)="checkPasswordValid1()">
+        <div class="modal-body">
+         <label for="existingPassword1">Please enter your existing password:</label>
+         <div [ngClass]="{'has-success': passwordForm1.controls.existingPassword1.valid ,'has-error': !passwordForm1.controls.existingPassword1.valid && focusPassword1,'form-group': true, 'has-feedback': true}">
+         <label *ngIf="passwordForm1.controls.existingPassword1.valid" class="control-label" for="existingPassword1"><i class="fa fa-check"></i>Valid password</label>
+         <label *ngIf="!passwordForm1.controls.existingPassword1.valid && focusPassword1" class="control-label" for="existingPassword1"><i class="fa fa-times-circle-o"></i>Password should have a minimum of 6 characters</label><br />
+          <input type="password" id="existingPassword1" class="form-control" placeholder="Enter your existing password ..." formControlName="existingPassword1" (focus)="onFocus(3)">
+         </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm" (click)="gotoProfile1()" style="background-color: #357ca5; color: white;">Back</button>
+          <button type="submit" class="btn btn-sm" style="background-color: #357ca5; color: white;">Next</button>
+          <button type="button" class="btn btn-sm" data-dismiss="modal" style="background-color: #357ca5; color: white;">Close</button>
+        </div>
+      </form>  
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="changepassword2">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header" style="background-color: #357ca5; color: white;">
+        <button type="button" class="close" data-dismiss="modal" >
+                  <span >&times;</span></button>        
+        <h4 class="modal-title">Change your security credentials:</h4>
+      </div>
+      <form [formGroup]="passwordForm2" (ngSubmit)="checkPasswordValid2()">
+        <div class="modal-body">
+         <label for="existingPassword2">Please enter your existing password:</label>
+         <div [ngClass]="{'has-success': passwordForm2.controls.existingPassword2.valid ,'has-error': !passwordForm2.controls.existingPassword2.valid && focusPassword2,'form-group': true, 'has-feedback': true}">
+         <label *ngIf="passwordForm2.controls.existingPassword2.valid" class="control-label" for="existingPassword2"><i class="fa fa-check"></i>Valid password</label>
+         <label *ngIf="!passwordForm2.controls.existingPassword2.valid && focusPassword2" class="control-label" for="existingPassword2"><i class="fa fa-times-circle-o"></i>Password should have a minimum of 6 characters</label><br />
+          <input type="password" id="existingPassword2" class="form-control" placeholder="Enter your existing password ..." formControlName="existingPassword2" (focus)="onFocus(4)">
+         </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm" (click)="gotoProfile2()" style="background-color: #357ca5; color: white;">Back</button>
+          <button type="submit" class="btn btn-sm" style="background-color: #357ca5; color: white;">Next</button>
+          <button type="button" class="btn btn-sm" data-dismiss="modal" style="background-color: #357ca5; color: white;">Close</button>
+        </div>
+      </form>  
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="newpassword">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header" style="background-color: #357ca5; color: white;">
+        <button type="button" class="close" data-dismiss="modal" >
+          <span >&times;</span></button>        
+          <h4 class="modal-title">Enter your new password:</h4>
+        </div>
+        <form [formGroup]="pform" (ngSubmit)="onEnterNewPassword()">
+          <div class="modal-body">
+            <div [ngClass]="{'has-success': pform.controls.password.valid ,'has-error': !pform.controls.password.valid && focusPassword,'form-group': true, 'has-feedback': true}">
+         <label *ngIf="pform.controls.password.valid" class="control-label" for="password"><i class="fa fa-check"></i>Valid password</label>
+         <label *ngIf="!pform.controls.password.valid && focusPassword" class="control-label" for="password"><i class="fa fa-times-circle-o"></i>Password should have a minimum of 6 characters</label>
+          <input type="password" class="form-control" placeholder="Password" id="password" name="password" formControlName="password" (focus)="onFocus(5)">
+          <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        </div>
+        
+        <div [ngClass]="{'has-success': pform.controls.cpassword.valid && this.pform.controls.password.value === this.pform.controls.cpassword.value && this.pform.controls.cpassword.value != null ,'has-error': (!pform.controls.cpassword.valid || (this.pform.controls.password.value != this.pform.controls.cpassword.value && this.pform.controls.cpassword.value != null)) && focusCPassword,'form-group': true, 'has-feedback': true}">
+         <label *ngIf="this.pform.controls.password.value === this.pform.controls.cpassword.value && this.pform.controls.cpassword.value != null" class="control-label" for="cpassword"><i class="fa fa-check"></i>Confirm password matches password</label>
+         <label *ngIf="this.pform.controls.password.value != this.pform.controls.cpassword.value && this.pform.controls.cpassword.value != null && focusCPassword" class="control-label" for="cpassword"><i class="fa fa-times-circle-o"></i>Confirm password does not match password</label>
+         <label *ngIf="this.pform.controls.cpassword.value === null && focusCPassword" class="control-label" for="cpassword"><i class="fa fa-times-circle-o"></i>Please re-type password</label>
+          <input type="password" class="form-control" placeholder="Confirm password" id="cpassword" name="cpassword" formControlName="cpassword" (focus)="onFocus(6)">
+          <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+         </div><br />
+         </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-sm" style="background-color: #357ca5; color: white;">Submit</button>
+            <button type="button" class="btn btn-sm" data-dismiss="modal" style="background-color: #357ca5; color: white;">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+<div class="modal" id="changesecurity">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header" style="background-color: #357ca5; color: white;">
+        <button type="button" class="close" data-dismiss="modal" >
+                  <span >&times;</span></button>        
+        <h4 class="modal-title">Change Security Credentials:</h4>
+      </div>
+         <form [formGroup]="sForm" (ngSubmit)="onChangedSecurity()">
+        <div class="modal-body">
+          <div class="form-group">
+          <label for="securityQuestion">Select a security question:</label>
+          <select class="form-control" formControlName="securityQuestion" id="securityQuestion">
+            <option *ngFor="let question of questions" [ngValue]="question">{{question}}</option>
+          </select>
+        </div>
+        <div [ngClass]="{'has-success': sForm.controls.securityAnswer.valid ,'has-error': !sForm.controls.securityAnswer.valid && focusSecAnswer,'form-group': true, 'has-feedback': true}">
+         <label *ngIf="!sForm.controls.securityAnswer.valid && focusSecAnswer" class="control-label" for="securityAnswer"><i class="fa fa-times-circle-o"></i>Please answer the security question</label>
+          <input type="text" class="form-control" placeholder="Answer to the security question" id="securityAnswer" name="securityAnswer" formControlName="securityAnswer" (focus)="onFocus(7)" autocomplete="off">
+        </div><br />
+        
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-sm" style="background-color: #357ca5; color: white;">Submit</button>
+            <button type="button" class="btn btn-sm" data-dismiss="modal" style="background-color: #357ca5; color: white;">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

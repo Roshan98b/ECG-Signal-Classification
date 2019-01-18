@@ -1,0 +1,19 @@
+{
+    "name": "Backend",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "start": "node app"
+    },
+    "dependencies": {
+        "bcrypt": "*",
+        "body-parser": "*",
+        "cors": "*",
+        "express": "*",
+        "jsonwebtoken": "*",
+        "mongoose": "*",
+        "nodemailer": "*",
+        "passport": "*",
+        "passport-jwt": "*"
+    }
+}

@@ -1,0 +1,29 @@
+<header class="main-header" >
+  <a routerLink="content" class="logo"><span class="logo-mini"><b>Ex</b>T</span>
+      <span class="logo-lg"><b>Demo</b>App</span></a>
+  <nav class="navbar navbar-static-top" role="navigation">
+    <a class="sidebar-toggle" data-toggle="push-menu" role="button">
+    </a>
+    <div class="navbar-custom-menu">
+      <ul class="nav navbar-nav">
+        <li class="dropdown user user-menu">
+          <a class="dropdown-toggle" data-toggle="dropdown">
+            <span class="hidden-xs">admin@admin.com</span>
+          </a>
+          <ul class="dropdown-menu">
+            <li class="user-header">
+              <p>
+                Welcome Admin!!
+              </p>
+            </li>
+            <li class="user-footer">
+              <div align="center">
+                <a (click)="logout()" class="btn btn-default btn-flat">Sign out</a>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
