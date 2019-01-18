@@ -125,4 +125,18 @@ export class UserService {
     });
   }
 
+  uploadHeaFile(model) {
+    return this.http.post(this.url + '/uploadhea', model, {
+      observe: 'body',
+      headers: new HttpHeaders().append('Content-Type', 'application/json')
+    });
+  }
+
+  uploadDatFile(model) {
+    return this.http.post(this.url + '/uploaddat', model, {
+      observe: 'body',
+      headers: new HttpHeaders().append('Content-Type', 'application/json')
+    });
+  }
+
 }

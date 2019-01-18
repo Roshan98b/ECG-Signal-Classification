@@ -12,6 +12,7 @@
         "express": "*",
         "jsonwebtoken": "*",
         "mongoose": "*",
+        "multer": "^1.4.1",
         "nodemailer": "*",
         "passport": "*",
         "passport-jwt": "*"

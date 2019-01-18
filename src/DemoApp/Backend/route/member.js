@@ -198,4 +198,16 @@ router.post('/checkPassword',
 		}
 );
 
+// Upload .hea File *
+router.post('/uploadhea', (req, res) => {
+	console.log(req.body.hea);
+	res.status(200).json({message: 'Success'});
+});
+
+// Upload .dat File *
+router.post('/uploaddat', (req, res) => {
+	console.log(req.body.dat);
+	res.status(200).json({message: 'Success'});
+});
+
 module.exports = router;
