@@ -5,7 +5,7 @@ var passport = require('passport');
 var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
-var multer = require('multer')
+var multer = require('multer');
 
 var Mail = require('../config/mail');
 var Member = require('../model/member'); 
