@@ -9,7 +9,8 @@ var multer = require('multer');
 var request =  require('request');
 
 var Mail = require('../config/mail');
-var Member = require('../model/member'); 
+var Member = require('../model/member');
+var Records = require('../model/records');
 var router = express.Router();
 var token = '';
 
@@ -220,7 +221,7 @@ router.post('/upload', (req, res) => {
 	files(req, res, (err) => {
 		if(err) {
 			console.log(err);
-			return res.status(501).json({error: err});
+			res.status(501).json({error: err});
 		}
 		else {
 			const obj = {filename: req.body.name};
@@ -245,11 +246,35 @@ router.post('/upload', (req, res) => {
 							'R': 0,
 							'P': 0,
 						};
+
 						for (i of classes) {
 							if (i == 0) result.N++;
 							else if (i == 1) result.R++;
 							else result.P++;							
 						}
+						
+						if (result.R === 0 && result.P === 0) {
+							result.arrhythmia = false;
+						} else {
+							result.arrhythmia = true;
+						}
+			
+						var record = new Records({
+							_id: new mongoose.Types.ObjectId(),
+							_member_id: req.body._id,
+							filename: req.body.name,
+							date: req.body.date,
+							result: result,
+						});
+			
+						Records.addRecord(record, (err, model) => {
+							if (err) {
+								console.log(err);
+								res.status(501).json(err);
+							} else {
+								res.status(200).json(result);
+							}
+						});
 						res.status(200).json(result);
 					}
 				}

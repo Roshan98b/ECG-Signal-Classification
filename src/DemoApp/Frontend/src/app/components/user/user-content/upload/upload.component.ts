@@ -16,6 +16,9 @@ export class UploadComponent implements OnInit {
   datFile: File = null;
   heaFile: File = null;
 
+  displayBox = false;
+  displayData = null;
+
   ngOnInit() {}
 
   onHeaFileSelect(event) {
@@ -36,13 +39,25 @@ export class UploadComponent implements OnInit {
     formData.append('name', this.heaFile.name.slice(0, -4));
     this.userService.uploadFile(formData).subscribe(
       (data) => {
-        alert('Uploaded files Successfully');
-        console.log(data);
+        this.displayData = data;
+        this.displayBox = true;
       },
       (err) => {
         console.log(err);
       }
     );
+  }
+
+  onArrhythmia() {
+    if (!this.displayData.arrhythmia) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  onClear() {
+    this.displayBox = false;
   }
 
 }

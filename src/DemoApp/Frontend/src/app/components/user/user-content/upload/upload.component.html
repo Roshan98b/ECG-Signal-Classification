@@ -9,20 +9,57 @@
         <div class="box-header">
           <h3 class="box-title">Upload .hea and .dat Files</h3>
         </div> 
-          <div class="box-body">
-            
-            <div class="form-group has-feedback">
-              <input type="file" (change)="onHeaFileSelect($event)" accept=".hea" name="hea" id="heaFile" class="form-control"/>
-            </div>
-            
-            <div class="form-group has-feedback"> 
-              <input type="file" (change)="onDatFileSelect($event)" accept=".dat" name="datFile" id="datFile" class="form-control"/>
-            </div>
-                      
+        <div class="box-body">
+          
+          <div class="form-group has-feedback">
+            <input type="file" (change)="onHeaFileSelect($event)" accept=".hea" name="hea" id="heaFile" class="form-control"/>
           </div>
-          <div class="box-footer">
-            <button type="button" (click)="onUpload()">Upload Files</button>
+          
+          <div class="form-group has-feedback"> 
+            <input type="file" (change)="onDatFileSelect($event)" accept=".dat" name="datFile" id="datFile" class="form-control"/>
           </div>
+                    
+        </div>
+        <div class="box-footer">
+          <button type="button" (click)="onUpload()">Upload Files</button>
+        </div>
+      </div>
+      
+      <div class="box box-primary" *ngIf="this.displayBox">
+        <div class="box-header">
+          <h3 class="box-title">Result</h3>
+        </div>
+        <div class="box-body">
+          <table class="table table-striped">
+            <tr>
+              <th>Type</th>
+              <th>Count</th>
+            </tr>
+            <tr>
+              <td>Normal Beats</td>
+              <td>{{this.displayData.N}}</td>
+            </tr>
+            <tr>
+              <td>RBBB Beats</td>
+              <td>{{this.displayData.R}}</td>
+            </tr>
+            <tr>
+              <td>Paced Beats</td>
+              <td>{{this.displayData.P}}</td>
+            </tr>
+          </table>
+          <div class="box-body" *ngIf="onArrhythmia(); else notarrhythmia">
+            <b>Arrhythmia detected !!</b>
+          </div>
+          <ng-template #notarrhythmia>
+            <div class="box-body">
+              <b>No Arrhythmia</b>
+            </div>
+          </ng-template>
+        </div>
+        <div class="box-footer">
+          <button type="button" (click)="onClear()">Clear</button>
+        </div>
       </div>
     </section>
   </div>
