@@ -29,11 +29,11 @@ export class UploadComponent implements OnInit {
   onUpload() {
     const formData = new FormData();
     const date = new Date();
-    formData.append('files', this.heaFile, date.getTime().toString() + '.hea');
-    formData.append('files', this.datFile, date.getTime().toString() + '.dat');
+    formData.append('files', this.heaFile, this.heaFile.name);
+    formData.append('files', this.datFile, this.datFile.name);
     formData.append('_id', this.userService.user._id);
     formData.append('date', date.toString());
-    formData.append('name', date.getTime().toString());
+    formData.append('name', this.heaFile.name.slice(0, -4));
     this.userService.uploadFile(formData).subscribe(
       (data) => {
         alert('Uploaded files Successfully');

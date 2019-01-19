@@ -223,7 +223,7 @@ router.post('/upload', (req, res) => {
 			return res.status(501).json({error: err});
 		}
 		else {
-			const obj = {filename: req.files[0].filename.split('.')[0]};
+			const obj = {filename: req.body.name};
 			req.body.date = new Date(req.body.date);
 
 			request.post(
@@ -234,25 +234,23 @@ router.post('/upload', (req, res) => {
 					},
 					json: obj
 				},
-				(err, res, body) => {
+				(err, response, body) => {
 					if(err) {
 						console.log(err);
 						res.status(501).json(err);
 					} else {
-						console.log(body);
-					}
-				}
-			);
-
-			res.status(200).json(
-				{
-					"hea": {
-						filename: req.files[0].filename,
-						originalname: req.files[0].originalname
-					}, 
-					"dat": {
-						filename: req.files[1].filename,
-						originalname: req.files[1].originalname
+						const classes = body.classes;
+						let result = {
+							'N': 0,
+							'R': 0,
+							'P': 0,
+						};
+						for (i of classes) {
+							if (i == 0) result.N++;
+							else if (i == 1) result.R++;
+							else result.P++;							
+						}
+						res.status(200).json(result);
 					}
 				}
 			);
