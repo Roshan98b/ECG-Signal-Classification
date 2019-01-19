@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 var multer = require('multer');
+var request =  require('request');
 
 var Mail = require('../config/mail');
 var Member = require('../model/member'); 
@@ -17,6 +18,7 @@ var token = '';
 const storage = multer.diskStorage({
 	destination: './uploads',
 	filename: (req, file, callback) => {
+		const date = new Date();
 		callback(null, file.originalname);
 	}
 });
@@ -221,8 +223,39 @@ router.post('/upload', (req, res) => {
 			return res.status(501).json({error: err});
 		}
 		else {
-			console.log(req.files);
-			return res.status(200).json({obj: req.files});
+			const obj = {filename: req.files[0].filename.split('.')[0]};
+			req.body.date = new Date(req.body.date);
+
+			request.post(
+				{
+					url: 'http://127.0.0.1:5000/classify',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					json: obj
+				},
+				(err, res, body) => {
+					if(err) {
+						console.log(err);
+						res.status(501).json(err);
+					} else {
+						console.log(body);
+					}
+				}
+			);
+
+			res.status(200).json(
+				{
+					"hea": {
+						filename: req.files[0].filename,
+						originalname: req.files[0].originalname
+					}, 
+					"dat": {
+						filename: req.files[1].filename,
+						originalname: req.files[1].originalname
+					}
+				}
+			);
 		}
 	});
 });

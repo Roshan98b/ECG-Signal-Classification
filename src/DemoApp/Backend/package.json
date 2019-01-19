@@ -15,6 +15,7 @@
         "multer": "^1.4.1",
         "nodemailer": "*",
         "passport": "*",
-        "passport-jwt": "*"
+        "passport-jwt": "*",
+        "request": "^2.88.0"
     }
 }

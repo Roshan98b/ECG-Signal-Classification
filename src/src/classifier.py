@@ -1,8 +1,10 @@
+# Filter warning messages
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from flask import Flask, jsonify, request
 
+# To avoid app crashes due to MultiThreading
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -10,8 +12,14 @@ import matplotlib.pyplot as plt
 import os, wfdb, cv2
 from wfdb import processing
 
+# Reduce Tensorflow messages
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 import tensorflow as tf
 
+# Model is loaded using the global object 'graph' 
+# 'graph' is used later to predict
+# Predict generates error if this is not used as default graph is changed due to MultiThreading 
 global graph
 graph = tf.get_default_graph()
 
@@ -24,14 +32,18 @@ loaded_model = load_model('../models/cnn_3labels_1.h5')
 app = Flask(__name__)
 
 @app.route('/classify', methods=['POST'])
-def hello_world():
+def classify():
     
+    # POST request body
     data = request.get_json()
+    
+    # Import record and find Peaks.
     file_path = '../DemoApp/Backend/uploads/' + data['filename']
     record = wfdb.rdrecord(file_path, channels=[0])
     rqrs = processing.xqrs_detect(record.p_signal[:,0], record.fs)
     
-    # Image Generation - Digital signals to Matplotlib Figures to Numpy Arrays
+    # Image Generation 
+    # Conversion of Digital signals to Matplotlib Figures to Numpy Arrays
     test_data = []
     for i in range(100, 200):
         start = rqrs[i]
