@@ -241,7 +241,6 @@ router.post('/upload', (req, res) => {
 						res.status(501).json(err);
 					} else {
 						const classes = body.classes;
-						console.log(classes);
 						let result = {
 							'N': 0,
 							'R': 0,
