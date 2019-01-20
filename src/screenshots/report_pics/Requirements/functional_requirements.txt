@@ -1,0 +1,18 @@
+1. Importing Requirement:
+    a.  The dataset contains digital signals of length approximately equal to 30 minutes. The frequency of each signal is 360. There is a voltage value associated with each segment. These voltage values are required to be imported as a list/array in the working environment.  
+    b.  The machine learning model after training has to be stored in the disk for deployment of the application. During deployment the system has to load the model with the design and trained weights. 
+2. Image Processing Requirements:
+    a.  CNN's take height, width and channels (RGB) of the images as their input. The system has to convert digital signals to images.
+    b.  The number of parameters in the neural network has to be reduced to make training computationally possible. The system has to reshape and crop the images to reduce the computation load.
+3. Training Requirements:
+    a.  The machine learning model has to trained to get best set of weights for classification.
+    b.  Hyperparameters such as learning rate, optimizer and loss function has to decided before training.        
+4. Front-end Requirements:
+    a.  The system is required to have front-end screens for login and register. Additionally, an option has to be there in case the user forgets the password. 
+    b.  The system should be able to differentiate between admin and user, and render approximate page.
+    c.  The system is required to accept '.dat' and '.hea' format files in the front-end.
+    d.  The system should display the list of records uploaded by the user in thr front-end. 
+5. Back-end Requirements:
+    a.  Communication is requied between multiple back-end servers of the system. 
+    b.  The servers have to accept POST/GET HTTP requests.
+    c.  Connection between the main back-end server and a database is required.
