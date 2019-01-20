@@ -250,8 +250,8 @@ router.post('/upload', (req, res) => {
 
 						for (let i of classes) {
 							if (i == 0) result.N++;
-							else if (i == 1) result.R++;
-							else result.P++;							
+							else if (i == 1) result.P++;
+							else result.R++;							
 						}
 						
 						if (result.R === 0 && result.P === 0) {
