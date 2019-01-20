@@ -1,0 +1,77 @@
+Express-Main-Server()-Backend():
+
+    CONNECT to MongoDB DataDase
+    USE DB 'ECG'
+
+    // Member table
+    Member = model('member')
+
+    // Records table
+    Records = model('records')
+
+    // PYTHON FLASK Server
+    server_url = 'http://127.0.0.1:5000'
+    
+    WHILE LISTEN to port 3000 DO:
+
+        // url: '/login'
+        // method: POST
+        Login(data):
+        BEGIN
+            // Search for User
+            record = Member.find(data.email, data.password)
+            IF record is null:
+                SEND RESPONSE 'invalid credentials'
+            ELSE:
+                SEND RESPONSE record       
+        END
+
+        // url: '/register'
+        // method: POST
+        Register(data):
+        BEGIN:
+            // Insert into 'Member' table
+            Member.save(data)
+            SEND RESPONSE 'Success'
+        END
+
+        // url: '/userrecords'
+        // method: POST
+        UserRecords(data):
+        BEGIN:
+            // Find all records with '_member_id' = 'data._id'
+            records = Records.find({'_member_id': 'data._id'})
+            SEND RESPONSE records
+        END
+
+        // url: '/userupload'
+        // method: POST
+        UserUpload(data):
+        BEGIN:
+            RETRIEVE information of files from 'data'.
+            STORE files on disk.
+            // Send path of the files
+            POST REQUEST to server_url+'/classify'
+            Aggregate result obtained.
+            // Insert into 'records' table
+            Records.save(result)
+            SEND RESPONSE result
+        END
+
+        // url: '/allrecords'
+        // method: GET
+        AllRecords():
+        BEGIN:
+            // Get all records
+            result1 = Records.find({})
+            finalresult = []
+            FOR i IN result1 DO:
+                // Find users with _id = _member_id
+                result2 = Member.find({_id: _member_id})
+                finalresult.push(i + result2)
+            END_FOR
+            SEND RESPONSE finalresult
+        END
+    
+    END_WHILE
+END

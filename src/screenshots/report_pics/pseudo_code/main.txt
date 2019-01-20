@@ -1,0 +1,7 @@
+BEGIN:
+    // Start all Servers
+    START MongoDB
+    Angular-Frontend()
+    Express-Main-Server()-Backend()
+    Python-Flask-Server()
+END

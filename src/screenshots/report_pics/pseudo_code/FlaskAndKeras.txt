@@ -1,0 +1,36 @@
+Python-Flask-Server():
+
+    WHILE LISTEN to port 5000:
+
+        // url: '/classify'
+        // method: POST
+        classify(data):
+        BEGIN:
+            // Initialization
+            loaded_model = LOAD trained model 
+            filepath = data.path
+            record = READ the digital signal present in 'filepath' using 'wfdb'
+
+            // Preprocess
+            Find peaks of 'record' using 'wfdb'
+            test_data = []
+            FOR i IN peaks DO:
+                // Plot R-T segments
+                image = PLOT between points i and i+200 using 'matplotlib'
+                Convert 'image' of type 'matplotlib.figure' to 'numpy.ndarray'
+                image = RESHAPE 'image' to (288, 432, 3) using 'opencv'
+                image = CROP 'image' to fit signal and form image of size (215, 335, 3)
+                // Reduce the image resolution 5 times
+                image = RESHAPE 'image' to (43, 45, 3) using 'opencv'
+                test_data.append(image)
+            END_FOR
+            
+            // Classify
+            predictions = PREDICT classes of 'test_data' using 'keras' 
+
+            SEND RESPONSE predictions
+        END
+
+    END_WHILE
+
+END

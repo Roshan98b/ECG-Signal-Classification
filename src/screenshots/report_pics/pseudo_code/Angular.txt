@@ -1,0 +1,63 @@
+Angular-Frontend():
+    
+    WHILE LISTEN to port 4200 DO:
+
+        // EXPRESS JS Server
+        backend_url = 'http://127.0.0.1:3000'
+
+        LoginScreen():
+        BEGIN:
+            IF user has not registered:
+                RegisterScreen()
+            ELSE:
+                Obtain data from Form
+                // Send Form data 
+                POST REQUEST to backend_url+'/login'
+                IF Login is successful:
+                    Save Admin/User Data in LocalStorage with jwt_token
+                    IF Admin:
+                        AdminDisplayScreen()
+                    ELSE
+                        UserDisplayScreen()
+                    END_IF
+                ELSE:
+                    LoginScreen()
+                END_IF
+            END_IF
+        END
+
+        RegisterScreen():
+        BEGIN:
+            IF user has registered:
+                LoginScreen()
+            ELSE:
+                Obtain data from Form
+                // Send Form data
+                POST REQUEST to backend_url+'/register'
+                LoginScreen()
+            END_IF
+        END
+
+        UserDisplayScreen():
+        BEGIN:
+            // Send User id
+            result = POST REQUEST to backend_url+'/userrecords'
+            DISPLAY result
+        END
+
+        UserUploadScreen():
+        BEGIN:
+            Obtain Form data
+            // Form data containg files
+            result = POST REQUEST to backend_url+'/userupload'
+            DISPLAY result as 'No Arrhythmia' or 'Arrhythmia detected'
+        END
+
+        AdminDisplayScreen():
+        BEGIN:
+            result = GET REQUEST to backend_url+'/allrecords'
+            DISPLAY result
+        END
+
+    END_WHILE
+END
