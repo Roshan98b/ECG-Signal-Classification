@@ -35,13 +35,13 @@ module.exports.addRecord = (model, callback) => {
 
 // All Records
 module.exports.getAllRecords = (callback) => {
-    Member.find({}, callback);
+    Records.find({}, callback);
 };
 
 // User Records
 module.exports.getUserRecords = (id, callback) => {
-    let query = {_member_id: id}
-    Member.find(query, callback);
+    let query = {_member_id: id};
+    Records.find(query, callback);
 };
 
 

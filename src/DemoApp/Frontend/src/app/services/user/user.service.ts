@@ -15,6 +15,8 @@ export class UserService {
   token: any;
   user: any;
 
+  allRecords = [];
+
   postMember(member) {
     return this.http.post(this.url + '/member', member, {
       observe: 'body',
@@ -127,6 +129,17 @@ export class UserService {
 
   uploadFile(model) {
     return this.http.post(this.url + '/upload', model);
+  }
+
+  getUserRecords() {
+    return this.http.post(this.url + '/userrecords', {_id: this.user._id}, {
+      observe: 'body',
+      headers: new HttpHeaders().append('Content-Type', 'application/json')
+    });
+  }
+
+  getAllRecords() {
+    return this.http.get(this.url + '/allrecords');
   }
 
 }

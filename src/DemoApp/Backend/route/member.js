@@ -248,7 +248,7 @@ router.post('/upload', (req, res) => {
 							'P': 0,
 						};
 
-						for (i of classes) {
+						for (let i of classes) {
 							if (i == 0) result.N++;
 							else if (i == 1) result.R++;
 							else result.P++;							
@@ -279,6 +279,52 @@ router.post('/upload', (req, res) => {
 					}
 				}
 			);
+		}
+	});
+});
+
+// User Records
+router.post('/userrecords', (req, res) => {
+	Records.getUserRecords(req.body._id, (err, model) => {
+		if (err) {
+			console.log(err);
+			res.status(501).json(err);
+		} else {
+			res.status(200).json(model);
+		}
+	});
+});
+
+// All Records
+router.get('/allrecords', (req, res) => {
+	Records.getAllRecords((err, model) => {
+		if(err) {
+			console.log(err);
+			res.status(501).json(err);
+		} else {
+			let display = [];
+			for (let i of model) {
+				Member.getById(i._member_id, (err, record) => {
+					if (err) {
+						console.log(err);
+						res.status(500).json(err);
+					} else {
+						let obj = {
+							_id: i._id,
+							_member_id: i._member_id,
+							filename: i.filename,
+							date: i.date,
+							result: i.result,
+							username: record.firstname + ' ' + record.lastname  
+						};
+						display.push(obj);
+						if(display.length === model.length) res.status(200).json(display);
+					}
+				});
+			}
+			if (model === []) {
+				res.status(200).json([]);
+			}
 		}
 	});
 });

@@ -5,6 +5,42 @@
       </h1>
     </section>
     <section class="content">
-      Hello
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Results</h3>
+        </div>
+        <div class="box-body" *ngIf="!(this.userService.allRecords.length === 0); else empty">
+          <table class="table table-stripped">
+            <tr>
+              <th>Filename</th>
+              <th>Date</th>
+              <th>Normal</th>
+              <th>RBBB</th>
+              <th>Paced</th>
+              <th>Result</th>
+            </tr>
+            <tr *ngFor="let i of this.userService.allRecords">
+              <td>{{i.filename}}</td>
+              <td>{{i.date | date}}</td>
+              <td>{{i.result.N}}</td>
+              <td>{{i.result.R}}</td>
+              <td>{{i.result.P}}</td>
+              <td *ngIf="i.result.arrhythmia; else not">
+                Arrhythmia Detected
+              </td>
+              <ng-template #not>
+              <td>No Arrhythmia</td>
+              </ng-template>
+            </tr>
+          </table>
+        </div>
+        <ng-template #empty>
+          <div class="box-body">
+            No Results Found
+          </div>
+        </ng-template>
+        <div class="box-footer">
+        </div>
+      </div>
     </section>
   </div>
