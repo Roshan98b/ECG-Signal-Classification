@@ -1,0 +1,64 @@
+<div class="content-wrapper" >
+    <section class="content-header">
+      <h1>
+        Acquisition
+      </h1>
+    </section>
+    <section class="content">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Enter IP Address of the Device</h3>
+        </div>
+        <form [formGroup]="acquisitionForm" (ngSubmit)="onStart()">
+          <div class="box-body">
+            <div [ngClass]="{'has-success': acquisitionForm.controls.ipaddress.valid ,'has-error': !acquisitionForm.controls.ipaddress.valid && focusIP,'form-group': true, 'has-feedback': true}">
+              <label *ngIf="acquisitionForm.controls.ipaddress.valid" class="control-label" for="ipaddress"><i class="fa fa-check"></i>Valid IP Address</label>
+              <label *ngIf="!acquisitionForm.controls.ipaddress.valid && focusIP" class="control-label" for="ipaddress"><i class="fa fa-times-circle-o"></i>Please enter a valid IP Address</label>
+              <input type="text" name="ipaddress" id="ipaddress" class="form-control" placeholder="192.168.1.111" formControlName="ipaddress" autocomplete="off" (focus)="onFocus(1)"/>
+					  </div>
+          </div>
+          
+          <div class="box-footer">
+            <button type="submit" class="btn btn-primary btn-block" [disabled]="!acquisitionForm.valid">Start</button>
+          </div>
+        </form>
+      </div>
+      
+      <div class="box box-primary" *ngIf="this.displayBox">
+        <div class="box-header">
+          <h3 class="box-title">Result</h3>
+        </div>
+        <div class="box-body">
+          <table class="table table-striped">
+            <tr>
+              <th>Type</th>
+              <th>Count</th>
+            </tr>
+            <tr>
+              <td>Normal Beats</td>
+              <td>{{this.displayData.N}}</td>
+            </tr>
+            <tr>
+              <td>RBBB Beats</td>
+              <td>{{this.displayData.R}}</td>
+            </tr>
+            <tr>
+              <td>Paced Beats</td>
+              <td>{{this.displayData.P}}</td>
+            </tr>
+          </table>
+          <div class="box-body" *ngIf="onArrhythmia(); else notarrhythmia">
+            <b>Arrhythmia detected !!</b>
+          </div>
+          <ng-template #notarrhythmia>
+            <div class="box-body">
+              <b>No Arrhythmia</b>
+            </div>
+          </ng-template>
+        </div>
+        <div class="box-footer">
+          <button type="button" (click)="onClear()">Clear</button>
+        </div>
+      </div>
+    </section>
+  </div>

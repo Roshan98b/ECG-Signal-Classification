@@ -131,6 +131,13 @@ export class UserService {
     return this.http.post(this.url + '/upload', model);
   }
 
+  startAcquisition(model) {
+    return this.http.post(this.url + '/signalAcquisition', model, {
+      observe: 'body',
+      headers: new HttpHeaders().append('Content-Type', 'application/json')
+    });
+  }
+
   getUserRecords() {
     return this.http.post(this.url + '/userrecords', {_id: this.user._id}, {
       observe: 'body',

@@ -22,6 +22,7 @@ import { UserTopNavBarComponent } from './components/user/user-top-nav-bar/user-
 import { UserSideNavBarComponent } from './components/user/user-side-nav-bar/user-side-nav-bar.component';
 import { UserDisplayComponent } from './components/user/user-content/user-display/user-display.component';
 import { UploadComponent } from './components/user/user-content/upload/upload.component';
+import { AcquisitionComponent } from './components/user/user-content/acquisition/acquisition.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { UploadComponent } from './components/user/user-content/upload/upload.co
     UserTopNavBarComponent,
     UserSideNavBarComponent,
     UserDisplayComponent,
-    UploadComponent
+    UploadComponent,
+    AcquisitionComponent
   ],
   imports: [
     BrowserModule,

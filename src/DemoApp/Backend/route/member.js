@@ -328,4 +328,22 @@ router.get('/allrecords', (req, res) => {
 	});
 });
 
+router.post('/signalAcquisition', (req, res) => {
+	request.get(
+		{
+			url: req.body.ip
+		},
+		(err, response, body) => {
+			if(err) {
+				console.log(err);
+				res.status(501).json(err);
+			} else {
+				values = body.ecg;
+				console.log(values);
+				// send values to classifier
+			}
+		}
+	);
+});
+
 module.exports = router;

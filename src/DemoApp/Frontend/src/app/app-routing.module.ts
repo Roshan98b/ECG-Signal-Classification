@@ -13,6 +13,7 @@ import { UserDisplayComponent } from './components/user/user-content/user-displa
 import { UploadComponent } from './components/user/user-content/upload/upload.component';
 import { AdminGuard } from './guard/admin/admin.guard';
 import { UserGuard } from './guard/user/user.guard';
+import { AcquisitionComponent } from './components/user/user-content/acquisition/acquisition.component';
 
 const routes: Routes = [
   {
@@ -89,6 +90,11 @@ const routes: Routes = [
           {
             path: 'upload',
             component: UploadComponent,
+            canActivate: [UserGuard]
+          },
+          {
+            path: 'acquisition',
+            component: AcquisitionComponent,
             canActivate: [UserGuard]
           }
         ]
