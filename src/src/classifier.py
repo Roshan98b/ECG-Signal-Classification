@@ -29,8 +29,50 @@ from keras.models import load_model
 
 loaded_model = load_model('../models/cnn_3labels_1.h5')
 
+# Peak Detection for Dev-ECG Data
+def peak_detect(values):
+    n = len(values)
+    mean = sum(values)/n
+    peak_temp = [i for i in range(len(values)) if values[i] > mean+0.3]
+    peak = [peak_temp[0]]
+    for i in range(1, len(peak_temp)):
+        if peak_temp[i] < peak_temp[i-1]+5:
+            if values[i] > values[i-1]:
+                peak.pop()
+                peak.append(peak_temp[i])
+        else:
+            peak.append(peak_temp[i])
+    peak.pop(0)
+    peak.pop()
+    return (peak, mean)
+
+# Peak Analysis for Dev-ECG Data
+def peak_interval(peak):
+    interval = [peak[i]-peak[i-1] for i in range(1,len(peak))]
+    return (interval, sum(interval)//len(interval))
+
+# Create Image from Dev-ECG Data
+def create_images(ecg, peak, imean):
+    half_range = imean//2
+    test_data = []
+    for i in peak:
+        start = i-half_range
+        stop = i+half_range
+        temp_ecg = [ecg[j] for j in range(start, stop+1)]
+        image = plt.figure()
+        plt.plot(range(len(temp_ecg)), temp_ecg)
+        image.canvas.draw()
+        data = np.frombuffer(image.canvas.tostring_rgb(), dtype=np.uint8)
+        data = data.reshape((image.canvas.get_width_height()[::-1]+(3,)))
+        data = cv2.cvtColor(data, cv2.COLOR_RGB2BGR)
+        data = cv2.resize(data, (432,288), cv2.INTER_LINEAR)
+        data = data[288-250:288-35, 56:390]
+        test_data.append(data)
+    return test_data
+
 app = Flask(__name__)
 
+# For MIT-BIH Data
 @app.route('/classify', methods=['POST'])
 def classify():
     
@@ -65,6 +107,27 @@ def classify():
         plt.close()
     test_data = np.array(test_data)
 
+    # Convert List to Numpy Array
+    test_data = np.array(test_data)
+
+    with graph.as_default():
+        predictions = loaded_model.predict_classes(test_data).tolist()
+
+    return jsonify({'classes': predictions})
+
+# For Dev-ECG Data
+@app.route('/devclassify', methods=['POST'])
+def devclassify():
+    # POST request body
+    data = request.get_json()
+
+    ecg = data['ecg']
+
+    peak, pmean = peak_detect(ecg)
+    interval, imean = peak_interval(peak)
+    test_data = create_images(ecg, peak, imean)
+
+    print (pmean, interval)
     # Convert List to Numpy Array
     test_data = np.array(test_data)
 

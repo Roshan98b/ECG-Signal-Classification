@@ -53,7 +53,7 @@ module.exports.addUser = (model, callback) => {
 
 // Read *
 module.exports.getById = (id, callback) => {
-	Member.findById(id, callback);
+	return Member.findById(id, callback);
 };
 
 // Read *

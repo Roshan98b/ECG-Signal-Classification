@@ -9,9 +9,9 @@ var ModelSchema = mongoose.Schema({
 		refs: 'member',
 		unique: false
     },
-    filename: {
-		type: String
-	},
+    ecg: {
+        type: Array,
+    },
 	date: {
 		type: Date,
 		required: true
@@ -24,24 +24,23 @@ var ModelSchema = mongoose.Schema({
 	}
 });
 
-var Records = mongoose.model('records', ModelSchema);
+var DevRecords = mongoose.model('devrecords', ModelSchema);
 
-module.exports = Records;
+module.exports = DevRecords;
 
 // Add record
-module.exports.addRecord = (model, callback) => {
+module.exports.addDevRecord = (model, callback) => {
 	model.save(callback);
 };
 
 // All Records
-module.exports.getAllRecords = (callback) => {
-    return Records.find({}, callback);
+module.exports.getAllDevRecords = (callback) => {
+    return DevRecords.find({}, callback);
 };
 
 // User Records
-module.exports.getUserRecords = (id, callback) => {
+module.exports.getUserDevRecords = (id, callback) => {
     let query = {_member_id: id};
-    return Records.find(query, callback);
+    return DevRecords.find(query, callback);
 };
-
 

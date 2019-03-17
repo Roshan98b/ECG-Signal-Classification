@@ -1,4 +1,4 @@
-// jshint esversion : 6
+// jshint esversion : 9
 
 var express = require('express');
 var passport = require('passport');
@@ -6,14 +6,14 @@ var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 var multer = require('multer');
-var request =  require('request');
+var request =  require('request-promise');
 
 var Mail = require('../config/mail');
 var Member = require('../model/member');
 var Records = require('../model/records');
+var DevRecords = require('../model/devrecords');
 var router = express.Router();
 var token = '';
-
 
 // Multer Config - Set Storage
 const storage = multer.diskStorage({
@@ -201,18 +201,16 @@ router.post('/editedprofile',
 //Check password before allowing access to change password *
 router.post('/checkPassword',
 	passport.authenticate('jwt', {session: false}),
- 		(req, res) => {
- 			console.log(req.body);
-			Member.getById(req.body.id, (err, model) => {
-				if(err)
-					res.status(501).json({message: 'Member not found!!'});
-				else {
-					if(bcrypt.compareSync(req.body.password, model.password))
-						res.status(200).json({message: 'Password verified successfully!!'});
-					else
-						res.status(501).json({message: 'Incorrect password!!'});
-				}
-			});
+ 		async (req, res) => {
+			try {
+				let model = await Member.getById(req.body.id);
+				if(bcrypt.compareSync(req.body.password, model.password))
+					res.status(200).json({message: 'Password verified successfully!!'});
+				else
+					res.status(501).json({message: 'Incorrect password!!'});
+			} catch(err) {
+				res.status(501).json({message: 'Member not found!!'});
+			}
 		}
 );
 
@@ -227,123 +225,136 @@ router.post('/upload', (req, res) => {
 			const obj = {filename: req.body.name};
 			req.body.date = new Date(req.body.date);
 
-			request.post(
-				{
-					url: 'http://127.0.0.1:5000/classify',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					json: obj
+			var options = {
+				method: 'POST',
+				url: 'http://127.0.0.1:5000/classify',
+				headers: {
+					'Content-Type': 'application/json'
 				},
-				(err, response, body) => {
-					if(err) {
-						console.log(err);
-						res.status(501).json(err);
-					} else {
-						const classes = body.classes;
-						let result = {
-							'N': 0,
-							'R': 0,
-							'P': 0,
-						};
+				json: obj
+			};
+			let result = {
+				'N': 0,
+				'R': 0,
+				'P': 0,
+			};
+			request(options).then((body) => {
+				const classes = body.classes;
 
-						for (let i of classes) {
-							if (i == 0) result.N++;
-							else if (i == 1) result.P++;
-							else result.R++;							
-						}
-						
-						if (result.R === 0 && result.P === 0) {
-							result.arrhythmia = false;
-						} else {
-							result.arrhythmia = true;
-						}
-			
-						var record = new Records({
-							_id: new mongoose.Types.ObjectId(),
-							_member_id: req.body._id,
-							filename: req.body.name,
-							date: req.body.date,
-							result: result,
-						});
-			
-						Records.addRecord(record, (err, model) => {
-							if (err) {
-								console.log(err);
-								res.status(501).json(err);
-							} else {
-								res.status(200).json(result);
-							}
-						});
-					}
+				for (let i of classes) {
+					if (i == 0) result.N++;
+					else if (i == 1) result.P++;
+					else result.R++;							
 				}
-			);
+				
+				if (result.R === 0 && result.P === 0) {
+					result.arrhythmia = false;
+				} else {
+					result.arrhythmia = true;
+				}
+	
+				var record = new Records({
+					_id: new mongoose.Types.ObjectId(),
+					_member_id: req.body._id,
+					filename: req.body.name,
+					date: req.body.date,
+					result: result
+				});
+	
+				return Records.addRecord(record);
+			}).then((model) => {
+				res.status(200).json(result);
+			}).catch((err) => {
+				console.log(err);
+				res.status(501).json(err);
+			});
 		}
 	});
 });
 
 // User Records
-router.post('/userrecords', (req, res) => {
-	Records.getUserRecords(req.body._id, (err, model) => {
-		if (err) {
-			console.log(err);
-			res.status(501).json(err);
-		} else {
-			res.status(200).json(model);
-		}
-	});
+router.post('/userrecords', async (req, res) => {
+	try {
+		let model = await Records.getUserRecords(req.body._id);
+		res.status(200).json(model);
+	} catch(err) {
+		console.log(err);
+		res.status(500).json(err);
+	}
 });
 
 // All Records
-router.get('/allrecords', (req, res) => {
-	Records.getAllRecords((err, model) => {
-		if(err) {
+router.get('/allrecords', async (req, res) => {
+	let record = await Records.getAllRecords();
+	let display = [];
+	for (let i of record) {
+		try {
+			let model = await Member.getById(i._member_id);
+			let obj = {
+					_id: i._id,
+					_member_id: i._member_id,
+					filename: i.filename,
+					date: i.date,
+					result: i.result,
+					username: model.firstname + ' ' + model.lastname  
+				};
+			display.push(obj);
+		} catch(err) {
 			console.log(err);
 			res.status(501).json(err);
-		} else {
-			let display = [];
-			for (let i of model) {
-				Member.getById(i._member_id, (err, record) => {
-					if (err) {
-						console.log(err);
-						res.status(500).json(err);
-					} else {
-						let obj = {
-							_id: i._id,
-							_member_id: i._member_id,
-							filename: i.filename,
-							date: i.date,
-							result: i.result,
-							username: record.firstname + ' ' + record.lastname  
-						};
-						display.push(obj);
-						if(display.length === model.length) res.status(200).json(display);
-					}
-				});
-			}
-			if (model === []) {
-				res.status(200).json([]);
-			}
 		}
-	});
+	}
+	res.status(200).json(display);
 });
 
-router.post('/signalAcquisition', (req, res) => {
-	request.get(
-		{
-			url: req.body.ip
-		},
-		(err, response, body) => {
-			if(err) {
-				console.log(err);
-				res.status(501).json(err);
-			} else {
-				values = body.ecg;
-				console.log(values);
-				// send values to classifier
-			}
+// Signal Acquisition
+router.post('/signalAcquisition', async (req, res) => {
+	try {
+		var options; 
+		options = {
+			method: 'GET',
+			url: `http://${req.body.ip}:5000/acquire_ecg`
+		};
+		let values = await request(options);
+		console.log(values);
+		options = {
+			method: 'POST',
+			url: 'http://127.0.0.1:5000/devclassify',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			json: values
+		};
+		let body = await request(options);
+		const classes = body.classes;
+		let result = {
+			'N': 0,
+			'R': 0,
+			'P': 0,
+		};
+		for (let i of classes) {
+			if (i == 0) result.N++;
+			else if (i == 1) result.P++;
+			else result.R++;							
+		}		
+		if (result.R === 0 && result.P === 0) {
+			result.arrhythmia = false;
+		} else {
+			result.arrhythmia = true;
 		}
-	);
+		var devrecord = new DevRecords({
+			_id: new mongoose.Types.ObjectId(),
+			_member_id: req.body._id,
+			ecg: values.ecg,
+			date: req.body.date,
+			result: result
+		});
+		await DevRecords.addDevRecord(devrecord);
+		res.status(200).json({result: result, ecg: values.ecg});
+	} catch(err) {
+		console.log(err);
+		res.status(501).json(err);
+	}
 });
 
 module.exports = router;

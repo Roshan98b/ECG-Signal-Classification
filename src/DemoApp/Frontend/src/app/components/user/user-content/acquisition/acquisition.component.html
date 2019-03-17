@@ -23,6 +23,21 @@
           </div>
         </form>
       </div>
+
+      <div *ngIf="content">
+            <section class="content-header">
+                <h1>ECG Signal</h1>
+            </section>
+            <section class="content-header">
+                <div class="box box-info">
+                    <div class="box-body">
+                        <div *ngIf="content">
+                            <canvas id="ecgCanvas">{{ ecgChart }}</canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+      </div>
       
       <div class="box box-primary" *ngIf="this.displayBox">
         <div class="box-header">
