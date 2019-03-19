@@ -316,7 +316,7 @@ router.post('/signalAcquisition', async (req, res) => {
 			url: `http://${req.body.ip}:5000/acquire_ecg`
 		};
 		let values = await request(options);
-		console.log(values);
+		values = JSON.parse(values);
 		options = {
 			method: 'POST',
 			url: 'http://127.0.0.1:5000/devclassify',
@@ -326,6 +326,7 @@ router.post('/signalAcquisition', async (req, res) => {
 			json: values
 		};
 		let body = await request(options);
+		body = JSON.parse(body);
 		const classes = body.classes;
 		let result = {
 			'N': 0,

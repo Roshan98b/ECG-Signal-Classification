@@ -120,7 +120,6 @@ def classify():
 def devclassify():
     # POST request body
     data = request.get_json()
-
     ecg = data['ecg']
 
     peak, pmean = peak_detect(ecg)
@@ -137,4 +136,4 @@ def devclassify():
     return jsonify({'classes': predictions})
 
 if __name__ == '__main__':
-   app.run()
+   app.run(debug=True)
