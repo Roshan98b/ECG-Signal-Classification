@@ -1,0 +1,6 @@
+.notvisible {
+    visibility: hidden;
+}
+.visible {
+    visibility: visible;
+}

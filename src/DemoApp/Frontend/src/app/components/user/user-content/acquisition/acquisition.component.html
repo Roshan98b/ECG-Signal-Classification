@@ -1,11 +1,11 @@
-<div class="content-wrapper" >
-    <section class="content-header">
+<div class="content-wrapper" id="print">
+    <section class="content-header section-to-not-print">
       <h1>
         Acquisition
       </h1>
     </section>
     <section class="content">
-      <div class="box box-primary">
+      <div class="box box-primary section-to-not-print">
         <div class="box-header">
           <h3 class="box-title">Enter IP Address of the Device</h3>
         </div>
@@ -24,26 +24,32 @@
         </form>
       </div>
 
-      <div *ngIf="content">
-            <section class="content-header">
-                <h1>ECG Signal</h1>
-            </section>
-            <section class="content-header">
-                <div class="box box-info">
-                    <div class="box-body">
-                        <div *ngIf="content">
-                            <canvas id="ecgCanvas">{{ ecgChart }}</canvas>
-                        </div>
-                    </div>
-                </div>
-            </section>
+
+      <div class="section-to-print heading">
+        <div class="box-header">
+          <h1 class="box-title">ECG Report</h1>
+        </div>
       </div>
       
+      <div class="box box-primary" [ngClass]="{'visible': this.content, 'notvisible': !this.content}">
+        <div class="box-body">
+          <section class="content-header">
+              <div class="box box-info">
+                  <div class="box-body">
+                      <div>
+                          <canvas id="ecgChart"></canvas>
+                      </div>
+                  </div>
+              </div>
+          </section>
+        </div>
+      </div>
+
       <div class="box box-primary" *ngIf="this.displayBox">
         <div class="box-header">
-          <h3 class="box-title">Result</h3>
+          <h1 class="box-title">Result</h1>
         </div>
-        <div class="box-body">
+        <div class="box-body" id="displayBox">
           <table class="table table-striped">
             <tr>
               <th>Type</th>
@@ -71,9 +77,19 @@
             </div>
           </ng-template>
         </div>
-        <div class="box-footer">
-          <button type="button" (click)="onClear()">Clear</button>
+        <div class="box-footer section-to-not-print">
+          <button type="button" class="btn btn-sm btn-primary pull-left" (click)="onClear()">Clear</button>
+          <button type="button" class="btn btn-sm btn-primary pull-right" (click)="onDownload()">Download Report</button>
         </div>
       </div>
+
+      <div class="box box-primary" *ngIf="this.displayError">
+        <div class="box-header">
+          <h4 class="box-title">
+            Error: ECG could not be acquired due of disturbance. Please try again with minimal movement.
+          </h4>
+        </div>
+      </div>
+
     </section>
   </div>

@@ -27,23 +27,27 @@ import numpy as np
 import tensorflow as tf
 from keras.models import load_model
 
-loaded_model = load_model('../models/cnn_3labels_1.h5')
+loaded_model = load_model('../models/cnn_3labels_2.h5')
 
 # Peak Detection for Dev-ECG Data
 def peak_detect(values):
     n = len(values)
     mean = sum(values)/n
-    peak_temp = [i for i in range(len(values)) if values[i] > mean+0.3]
-    peak = [peak_temp[0]]
-    for i in range(1, len(peak_temp)):
-        if peak_temp[i] < peak_temp[i-1]+5:
-            if values[i] > values[i-1]:
-                peak.pop()
+    peak_temp = [i for i in range(len(values)) if values[i] > mean+0.5]
+    peak = []
+    if len(peak_temp) != 0:
+        peak = [peak_temp[0]]
+        for i in range(1, len(peak_temp)):
+            if peak_temp[i] < peak_temp[i-1]+5:
+                if values[i] > values[i-1]:
+                    peak.pop()
+                    peak.append(peak_temp[i])
+            else:
                 peak.append(peak_temp[i])
-        else:
-            peak.append(peak_temp[i])
-    peak.pop(0)
-    peak.pop()
+        peak.pop(0)
+        peak.pop()
+        if len(peak) > 15 and len(peak) < 5:
+            peak = []
     return (peak, mean)
 
 # Peak Analysis for Dev-ECG Data
@@ -61,12 +65,14 @@ def create_images(ecg, peak, imean):
         temp_ecg = [ecg[j] for j in range(start, stop+1)]
         image = plt.figure()
         plt.plot(range(len(temp_ecg)), temp_ecg)
+        image.savefig('../dataset/ECG/test/'+str(i)+'.png')
         image.canvas.draw()
         data = np.frombuffer(image.canvas.tostring_rgb(), dtype=np.uint8)
         data = data.reshape((image.canvas.get_width_height()[::-1]+(3,)))
         data = cv2.cvtColor(data, cv2.COLOR_RGB2BGR)
         data = cv2.resize(data, (432,288), cv2.INTER_LINEAR)
         data = data[288-250:288-35, 56:390]
+        data = cv2.resize(data, (int(215/5), int(215/5)), cv2.INTER_LINEAR)
         test_data.append(data)
     return test_data
 
@@ -123,17 +129,22 @@ def devclassify():
     ecg = data['ecg']
 
     peak, pmean = peak_detect(ecg)
-    interval, imean = peak_interval(peak)
-    test_data = create_images(ecg, peak, imean)
+    
+    # Disturbance in Signal
+    if len(peak) == 0:
+        return jsonify({'classes': []})    
+    else: 
+        interval, imean = peak_interval(peak)
+        test_data = create_images(ecg, peak, imean)
 
-    print (pmean, interval)
-    # Convert List to Numpy Array
-    test_data = np.array(test_data)
+        print (pmean, interval)
+        # Convert List to Numpy Array
+        test_data = np.array(test_data)
 
-    with graph.as_default():
-        predictions = loaded_model.predict_classes(test_data).tolist()
+        with graph.as_default():
+            predictions = loaded_model.predict_classes(test_data).tolist()
 
-    return jsonify({'classes': predictions})
+        return jsonify({'classes': predictions})
 
 if __name__ == '__main__':
-   app.run(debug=True)
+   app.run()
