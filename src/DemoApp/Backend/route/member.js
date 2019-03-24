@@ -316,7 +316,7 @@ router.post('/signalAcquisition', async (req, res) => {
 			url: `http://${req.body.ip}:5000/acquire_ecg`
 		};
 		let values = await request(options);
-		console.log(values);
+		values = JSON.parse(values);		
 		options = {
 			method: 'POST',
 			url: 'http://127.0.0.1:5000/devclassify',
@@ -326,31 +326,38 @@ router.post('/signalAcquisition', async (req, res) => {
 			json: values
 		};
 		let body = await request(options);
-		const classes = body.classes;
-		let result = {
-			'N': 0,
-			'R': 0,
-			'P': 0,
-		};
-		for (let i of classes) {
-			if (i == 0) result.N++;
-			else if (i == 1) result.P++;
-			else result.R++;							
-		}		
-		if (result.R === 0 && result.P === 0) {
-			result.arrhythmia = false;
-		} else {
-			result.arrhythmia = true;
+		if (typeof(body) !== 'object' ) {
+			body = JSON.parse(body);
 		}
-		var devrecord = new DevRecords({
-			_id: new mongoose.Types.ObjectId(),
-			_member_id: req.body._id,
-			ecg: values.ecg,
-			date: req.body.date,
-			result: result
-		});
-		await DevRecords.addDevRecord(devrecord);
-		res.status(200).json({result: result, ecg: values.ecg});
+		const classes = body.classes;
+		if (classes.length === 0) {
+			res.status(200).json({result: []});
+		} else {
+			let result = {
+				'N': 0,
+				'R': 0,
+				'P': 0,
+			};
+			for (let i of classes) {
+				if (i == 0) result.N++;
+				else if (i == 1) result.P++;
+				else result.R++;							
+			}		
+			if (result.R === 0 && result.P === 0) {
+				result.arrhythmia = false;
+			} else {
+				result.arrhythmia = true;
+			}
+			var devrecord = new DevRecords({
+				_id: new mongoose.Types.ObjectId(),
+				_member_id: req.body._id,
+				ecg: values.ecg,
+				date: req.body.date,
+				result: result
+			});
+			await DevRecords.addDevRecord(devrecord);
+			res.status(200).json({result: result, ecg: values.ecg});
+		}
 	} catch(err) {
 		console.log(err);
 		res.status(501).json(err);
