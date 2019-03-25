@@ -1,7 +1,7 @@
 <div class="content-wrapper" >
 	<section class="content-header">
 	  <h1>
-	    MIT-BIH Display
+	    Device Display
 	  </h1>
 	</section>
 	<section class="content">
@@ -9,11 +9,10 @@
         <div class="box-header">
           <h3 class="box-title">Results</h3>
         </div>
-        <div class="box-body" *ngIf="!(this.userService.allRecords.length === 0); else empty">
+        <div class="box-body" *ngIf="!(this.userService.allDevRecords.length === 0); else empty">
           <table class="table table-stripped">
             <tr>
 							<th>Username</th>
-              <th>Filename</th>
               <th>Date</th>
               <th>Normal</th>
               <th>PVC</th>
@@ -23,7 +22,7 @@
               <th>Paced</th>
               <th>Result</th>
             </tr>
-            <tr *ngFor="let i of this.userService.allRecords">
+            <tr *ngFor="let i of this.userService.allDevRecords">
               <td>{{i.username}}</td>
 							<td>{{i.filename}}</td>
               <td>{{i.date | date}}</td>

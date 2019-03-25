@@ -15,7 +15,10 @@
               <th>Filename</th>
               <th>Date</th>
               <th>Normal</th>
+              <th>PVC</th>
+              <th>LBBB</th>
               <th>RBBB</th>
+              <th>Fusion</th>
               <th>Paced</th>
               <th>Result</th>
             </tr>
@@ -23,7 +26,10 @@
               <td>{{i.filename}}</td>
               <td>{{i.date | date}}</td>
               <td>{{i.result.N}}</td>
+              <td>{{i.result.V}}</td>
+              <td>{{i.result.L}}</td>
               <td>{{i.result.R}}</td>
+              <td>{{i.result.F}}</td>
               <td>{{i.result.P}}</td>
               <td *ngIf="i.result.arrhythmia; else not">
                 Arrhythmia Detected

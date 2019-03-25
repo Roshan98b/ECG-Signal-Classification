@@ -16,6 +16,7 @@ export class UserService {
   user: any;
 
   allRecords = [];
+  allDevRecords = [];
 
   postMember(member) {
     return this.http.post(this.url + '/member', member, {
@@ -145,8 +146,19 @@ export class UserService {
     });
   }
 
+  getDevRecords() {
+    return this.http.post(this.url + '/devrecords', {_id: this.user._id}, {
+      observe: 'body',
+      headers: new HttpHeaders().append('Content-Type', 'application/json')
+    });
+  }
+
   getAllRecords() {
     return this.http.get(this.url + '/allrecords');
+  }
+
+  getAllDevRecords() {
+    return this.http.get(this.url + '/alldevrecords');
   }
 
 }

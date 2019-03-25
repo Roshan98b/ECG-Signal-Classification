@@ -81,6 +81,11 @@ export class AcquisitionComponent implements OnInit {
               display: false
             }
           }]
+        },
+        elements: {
+          point: {
+            radius: 0
+          }
         }
       }
     });
@@ -123,10 +128,6 @@ export class AcquisitionComponent implements OnInit {
   onClear() {
     this.content = false;
     this.displayBox = false;
-  }
-
-  onDownload() {
-    window.print();
   }
 
 }

@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 
 import os, wfdb, cv2
 from wfdb import processing
+from src import ecg_peak_detection, peak_interval, create_images
 
 # Reduce Tensorflow messages
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -27,54 +28,7 @@ import numpy as np
 import tensorflow as tf
 from keras.models import load_model
 
-loaded_model = load_model('../models/cnn_3labels_2.h5')
-
-# Peak Detection for Dev-ECG Data
-def peak_detect(values):
-    n = len(values)
-    mean = sum(values)/n
-    peak_temp = [i for i in range(len(values)) if values[i] > mean+0.5]
-    peak = []
-    if len(peak_temp) != 0:
-        peak = [peak_temp[0]]
-        for i in range(1, len(peak_temp)):
-            if peak_temp[i] < peak_temp[i-1]+5:
-                if values[i] > values[i-1]:
-                    peak.pop()
-                    peak.append(peak_temp[i])
-            else:
-                peak.append(peak_temp[i])
-        peak.pop(0)
-        peak.pop()
-        if len(peak) > 15 and len(peak) < 5:
-            peak = []
-    return (peak, mean)
-
-# Peak Analysis for Dev-ECG Data
-def peak_interval(peak):
-    interval = [peak[i]-peak[i-1] for i in range(1,len(peak))]
-    return (interval, sum(interval)//len(interval))
-
-# Create Image from Dev-ECG Data
-def create_images(ecg, peak, imean):
-    half_range = imean//2
-    test_data = []
-    for i in peak:
-        start = i-half_range
-        stop = i+half_range
-        temp_ecg = [ecg[j] for j in range(start, stop+1)]
-        image = plt.figure()
-        plt.plot(range(len(temp_ecg)), temp_ecg)
-        image.savefig('../dataset/ECG/test/'+str(i)+'.png')
-        image.canvas.draw()
-        data = np.frombuffer(image.canvas.tostring_rgb(), dtype=np.uint8)
-        data = data.reshape((image.canvas.get_width_height()[::-1]+(3,)))
-        data = cv2.cvtColor(data, cv2.COLOR_RGB2BGR)
-        data = cv2.resize(data, (432,288), cv2.INTER_LINEAR)
-        data = data[288-250:288-35, 56:390]
-        data = cv2.resize(data, (int(215/5), int(215/5)), cv2.INTER_LINEAR)
-        test_data.append(data)
-    return test_data
+loaded_model = load_model('../models/cnn_6labels_1.h5')
 
 app = Flask(__name__)
 
@@ -87,20 +41,24 @@ def classify():
     
     # Import record and find Peaks.
     file_path = '../DemoApp/Backend/uploads/' + data['filename']
-    record = wfdb.rdrecord(file_path, channels=[0])
-    rqrs = processing.xqrs_detect(record.p_signal[:,0], record.fs)
+    start = 0
+    stop = 65000
+    record = wfdb.rdrecord(file_path, sampfrom=start, sampto=stop, channels=[0])
+    ecg = record.p_signal
+    # rqrs = processing.xqrs_detect(record.p_signal[:,0], record.fs)
+    rqrs = ecg_peak_detection(ecg, 30, 0.03, (stop-start)/record.fs, record.fs)
     
     # Image Generation 
     # Conversion of Digital signals to Matplotlib Figures to Numpy Arrays
     test_data = []
     for i in range(100, 200):
-        start = rqrs[i]
+        start = rqrs[i]-200
         stop = rqrs[i]+200
         if start<0: 
             start=0
         temp_rec = wfdb.rdrecord(file_path, sampfrom=start,sampto=stop, channels=[0])
         image = plt.figure()
-        plt.plot(range(200), temp_rec.p_signal)
+        plt.plot(range(400), temp_rec.p_signal)
         image.canvas.draw()
         data = np.frombuffer(image.canvas.tostring_rgb(), dtype=np.uint8)
         data = data.reshape((image.canvas.get_width_height()[::-1] + (3,)))
@@ -127,17 +85,19 @@ def devclassify():
     # POST request body
     data = request.get_json()
     ecg = data['ecg']
+    
+    frequency = 70
+    seconds = 10
 
-    peak, pmean = peak_detect(ecg)
+    peak = ecg_peak_detection(ecg, 30, 0.03, seconds, frequency)
     
     # Disturbance in Signal
     if len(peak) == 0:
         return jsonify({'classes': []})    
     else: 
-        interval, imean = peak_interval(peak)
+        imean = peak_interval(peak)
         test_data = create_images(ecg, peak, imean)
-
-        print (pmean, interval)
+        
         # Convert List to Numpy Array
         test_data = np.array(test_data)
 

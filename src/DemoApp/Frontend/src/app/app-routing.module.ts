@@ -14,6 +14,8 @@ import { UploadComponent } from './components/user/user-content/upload/upload.co
 import { AdminGuard } from './guard/admin/admin.guard';
 import { UserGuard } from './guard/user/user.guard';
 import { AcquisitionComponent } from './components/user/user-content/acquisition/acquisition.component';
+import { DevDisplayComponent } from './components/user/user-content/dev-display/dev-display.component';
+import { AllDevDisplayComponent } from './components/admin/admin-content/all-dev-display/all-dev-display.component';
 
 const routes: Routes = [
   {
@@ -59,6 +61,11 @@ const routes: Routes = [
             path: 'display',
             component: DisplayComponent,
             canActivate: [AdminGuard]
+          },
+          {
+            path: 'alldevdisplay',
+            component: AllDevDisplayComponent,
+            canActivate: [AdminGuard]
           }
         ]
       }
@@ -79,12 +86,17 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            redirectTo: 'display',
+            redirectTo: 'userdisplay',
             pathMatch: 'full'
           },
           {
-            path: 'display',
+            path: 'userdisplay',
             component: UserDisplayComponent,
+            canActivate: [UserGuard]
+          },
+          {
+            path: 'devdisplay',
+            component: DevDisplayComponent,
             canActivate: [UserGuard]
           },
           {

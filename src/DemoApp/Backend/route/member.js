@@ -233,21 +233,27 @@ router.post('/upload', (req, res) => {
 				},
 				json: obj
 			};
-			let result = {
-				'N': 0,
-				'R': 0,
-				'P': 0,
+			let result =  {
+				N: 0,
+				V: 0,
+				L: 0,
+				R: 0,
+				F: 0,
+				P: 0
 			};
 			request(options).then((body) => {
 				const classes = body.classes;
 
 				for (let i of classes) {
 					if (i == 0) result.N++;
-					else if (i == 1) result.P++;
-					else result.R++;							
+					else if (i == 1) result.V++;
+					else if (i == 2) result.L++;
+					else if (i == 3) result.R++;
+					else if (i == 4) result.F++;
+					else result.P++;							
 				}
 				
-				if (result.R === 0 && result.P === 0) {
+				if (result.V === 0 && result.L === 0 && result.R === 0 && result.F === 0 && result.P === 0) {
 					result.arrhythmia = false;
 				} else {
 					result.arrhythmia = true;
@@ -283,6 +289,17 @@ router.post('/userrecords', async (req, res) => {
 	}
 });
 
+// Device Records
+router.post('/devrecords', async (req, res) => {
+	try {
+		let model = await DevRecords.getDevRecords(req.body._id);
+		res.status(200).json(model);
+	} catch(err) {
+		console.log(err);
+		res.status(500).json(err);
+	}
+});
+
 // All Records
 router.get('/allrecords', async (req, res) => {
 	let record = await Records.getAllRecords();
@@ -296,6 +313,30 @@ router.get('/allrecords', async (req, res) => {
 					filename: i.filename,
 					date: i.date,
 					result: i.result,
+					username: model.firstname + ' ' + model.lastname  
+				};
+			display.push(obj);
+		} catch(err) {
+			console.log(err);
+			res.status(501).json(err);
+		}
+	}
+	res.status(200).json(display);
+});
+
+// All Device Records
+router.get('/alldevrecords', async (req, res) => {
+	let record = await DevRecords.getAllDevRecords();
+	let display = [];
+	for (let i of record) {
+		try {
+			let model = await Member.getById(i._member_id);
+			let obj = {
+					_id: i._id,
+					_member_id: i._member_id,
+					date: i.date,
+					result: i.result,
+					ecg: i.ecg,
 					username: model.firstname + ' ' + model.lastname  
 				};
 			display.push(obj);
@@ -333,17 +374,23 @@ router.post('/signalAcquisition', async (req, res) => {
 		if (classes.length === 0) {
 			res.status(200).json({result: []});
 		} else {
-			let result = {
-				'N': 0,
-				'R': 0,
-				'P': 0,
+			let result =  {
+				N: 0,
+				V: 0,
+				L: 0,
+				R: 0,
+				F: 0,
+				P: 0
 			};
 			for (let i of classes) {
 				if (i == 0) result.N++;
-				else if (i == 1) result.P++;
-				else result.R++;							
-			}		
-			if (result.R === 0 && result.P === 0) {
+				else if (i == 1) result.V++;
+				else if (i == 2) result.L++;
+				else if (i == 3) result.R++;
+				else if (i == 4) result.F++;
+				else result.P++;							
+			}
+			if (result.V === 0 && result.L === 0 && result.R === 0 && result.F === 0 && result.P === 0) {
 				result.arrhythmia = false;
 			} else {
 				result.arrhythmia = true;

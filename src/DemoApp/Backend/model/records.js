@@ -17,8 +17,11 @@ var ModelSchema = mongoose.Schema({
 		required: true
 	},
 	result: {
-        N: Number,
-        R: Number,
+		N: Number,
+		V: Number,
+		L: Number,
+		R: Number,
+		F: Number,
 		P: Number,
 		arrhythmia: Boolean
 	}

@@ -1,29 +1,3 @@
 a {
   cursor: pointer;
 }
-
-.section-to-print {
-  display: none;
-}
-
-@media print {
-  .heading {
-		top: 0;
-		padding-bottom: 5%;
-    text-align: center;
-  }
-
-  .section-to-not-print {
-    display: none;
-  }
-
-  .section-to-print {
-    display: block;
-  }
-
-  .main-footer {
-		position: absolute;
-		width: 100%;
-    bottom: 0;
-  }
-}

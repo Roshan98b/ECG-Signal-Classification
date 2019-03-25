@@ -23,6 +23,8 @@ import { UserSideNavBarComponent } from './components/user/user-side-nav-bar/use
 import { UserDisplayComponent } from './components/user/user-content/user-display/user-display.component';
 import { UploadComponent } from './components/user/user-content/upload/upload.component';
 import { AcquisitionComponent } from './components/user/user-content/acquisition/acquisition.component';
+import { DevDisplayComponent } from './components/user/user-content/dev-display/dev-display.component';
+import { AllDevDisplayComponent } from './components/admin/admin-content/all-dev-display/all-dev-display.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,9 @@ import { AcquisitionComponent } from './components/user/user-content/acquisition
     UserSideNavBarComponent,
     UserDisplayComponent,
     UploadComponent,
-    AcquisitionComponent
+    AcquisitionComponent,
+    DevDisplayComponent,
+    AllDevDisplayComponent
   ],
   imports: [
     BrowserModule,

@@ -17,8 +17,11 @@ var ModelSchema = mongoose.Schema({
 		required: true
 	},
 	result: {
-        N: Number,
-        R: Number,
+		N: Number,
+		V: Number,
+		L: Number,
+		R: Number,
+		F: Number,
 		P: Number,
 		arrhythmia: Boolean
 	}
@@ -39,7 +42,7 @@ module.exports.getAllDevRecords = (callback) => {
 };
 
 // User Records
-module.exports.getUserDevRecords = (id, callback) => {
+module.exports.getDevRecords = (id, callback) => {
     let query = {_member_id: id};
     return DevRecords.find(query, callback);
 };

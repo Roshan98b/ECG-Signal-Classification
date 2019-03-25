@@ -1,6 +1,7 @@
 .notvisible {
-    visibility: hidden;
+  visibility: hidden;
 }
+
 .visible {
-    visibility: visible;
+  visibility: visible;
 }
