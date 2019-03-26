@@ -28,7 +28,7 @@ import numpy as np
 import tensorflow as tf
 from keras.models import load_model
 
-loaded_model = load_model('../models/cnn_6labels_1.h5')
+loaded_model = load_model('../models/cnn_5labels_7.h5')
 
 app = Flask(__name__)
 
@@ -51,14 +51,14 @@ def classify():
     # Image Generation 
     # Conversion of Digital signals to Matplotlib Figures to Numpy Arrays
     test_data = []
-    for i in range(100, 200):
-        start = rqrs[i]-200
+    for i in range(1, 100):
+        start = rqrs[i]
         stop = rqrs[i]+200
         if start<0: 
             start=0
         temp_rec = wfdb.rdrecord(file_path, sampfrom=start,sampto=stop, channels=[0])
         image = plt.figure()
-        plt.plot(range(400), temp_rec.p_signal)
+        plt.plot(range(200), temp_rec.p_signal)
         image.canvas.draw()
         data = np.frombuffer(image.canvas.tostring_rgb(), dtype=np.uint8)
         data = data.reshape((image.canvas.get_width_height()[::-1] + (3,)))
@@ -90,13 +90,13 @@ def devclassify():
     seconds = 10
 
     peak = ecg_peak_detection(ecg, 30, 0.03, seconds, frequency)
-    
+    print(peak)
     # Disturbance in Signal
     if len(peak) == 0:
         return jsonify({'classes': []})    
     else: 
         imean = peak_interval(peak)
-        test_data = create_images(ecg, peak, imean)
+        test_data = create_images(ecg, peak, imean+10)
         
         # Convert List to Numpy Array
         test_data = np.array(test_data)

@@ -238,7 +238,6 @@ router.post('/upload', (req, res) => {
 				V: 0,
 				L: 0,
 				R: 0,
-				F: 0,
 				P: 0
 			};
 			request(options).then((body) => {
@@ -246,14 +245,13 @@ router.post('/upload', (req, res) => {
 
 				for (let i of classes) {
 					if (i == 0) result.N++;
-					else if (i == 1) result.V++;
+					else if (i == 1) result.P++;
 					else if (i == 2) result.L++;
-					else if (i == 3) result.R++;
-					else if (i == 4) result.F++;
-					else result.P++;							
+					else if (i == 3) result.V++;
+					else result.R++;							
 				}
 				
-				if (result.V === 0 && result.L === 0 && result.R === 0 && result.F === 0 && result.P === 0) {
+				if (result.V === 0 && result.L === 0 && result.R === 0 && result.P === 0) {
 					result.arrhythmia = false;
 				} else {
 					result.arrhythmia = true;
@@ -379,7 +377,6 @@ router.post('/signalAcquisition', async (req, res) => {
 				V: 0,
 				L: 0,
 				R: 0,
-				F: 0,
 				P: 0
 			};
 			for (let i of classes) {
@@ -387,10 +384,9 @@ router.post('/signalAcquisition', async (req, res) => {
 				else if (i == 1) result.V++;
 				else if (i == 2) result.L++;
 				else if (i == 3) result.R++;
-				else if (i == 4) result.F++;
 				else result.P++;							
 			}
-			if (result.V === 0 && result.L === 0 && result.R === 0 && result.F === 0 && result.P === 0) {
+			if (result.V === 0 && result.L === 0 && result.R === 0 && result.P === 0) {
 				result.arrhythmia = false;
 			} else {
 				result.arrhythmia = true;

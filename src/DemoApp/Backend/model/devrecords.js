@@ -21,7 +21,6 @@ var ModelSchema = mongoose.Schema({
 		V: Number,
 		L: Number,
 		R: Number,
-		F: Number,
 		P: Number,
 		arrhythmia: Boolean
 	}

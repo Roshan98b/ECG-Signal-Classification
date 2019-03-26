@@ -32,7 +32,7 @@ export class AcquisitionComponent implements OnInit {
   ngOnInit() {
     this.focusIP = false;
     this.acquisitionForm = this.formBuilder.group({
-      ipaddress: ['192.168.1.111', [Validators.required, Validators.pattern(this.ip)]]
+      ipaddress: ['192.168.1.6', [Validators.required, Validators.pattern(this.ip)]]
     });
   }
 
